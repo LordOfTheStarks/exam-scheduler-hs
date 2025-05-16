@@ -11,11 +11,10 @@ import java.time.LocalDateTime;
 @Table(name = "sose2025")
 public class Exam implements Serializable {
     @Id
-    @Column(name = "lecture")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String lecture;
     private String lecture_title;
-    @Id
-    @Column(name = "facultyID")
     private String facultyId;
     private String program;
     private String exam_type;
