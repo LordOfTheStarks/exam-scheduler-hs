@@ -4,6 +4,7 @@ import com.hochschule.exam_scheduler.exam.model.Exam;
 import com.hochschule.exam_scheduler.exam.repository.ExamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +33,40 @@ public class ExamService {
                 .filter(exam -> exam.getProgram().equalsIgnoreCase(programName))
                 .toList();
     }
+    public List<Exam> getExamsByFaculty(String facultyId) {
+        return examRepo.findAll().stream()
+                .filter(exam -> exam.getFacultyId().equalsIgnoreCase(facultyId))
+                .toList();
+    }
+    public List<Exam> getExamsByProgramAndLecture(String program, String lecture) {
+        return examRepo.findAll().stream().filter(exam -> exam.getProgram().equalsIgnoreCase(program)
+            && exam.getLecture().toLowerCase().contains(lecture.toLowerCase()))
+                .toList();
+    }
 
     public Exam addExam(Exam newExam) {
         return examRepo.save(newExam);
     }
 
+    public Exam updateExam(int id, Exam updatedExam) {
+        return examRepo.findById(id).map(existing -> {
+            existing.setLecture(updatedExam.getLecture());
+            existing.setLecture_title(updatedExam.getLecture_title());
+            existing.setFacultyId(updatedExam.getFacultyId());
+            existing.setProgram(updatedExam.getProgram());
+            existing.setExam_type(updatedExam.getExam_type());
+            existing.setCampus(updatedExam.getCampus());
+            existing.setBuilding(updatedExam.getBuilding());
+            existing.setRoom(updatedExam.getRoom());
+            existing.setExam_start_time(updatedExam.getExam_start_time());
+            existing.setExam_minutes(updatedExam.getExam_minutes());
+            existing.setInstructor(updatedExam.getInstructor());
+            return examRepo.save(existing);
+        }).orElse(null);
+    }
+
+    @Transactional
+    public void deleteExam(int id) {
+        examRepo.deleteById(id);
+    }
 }
