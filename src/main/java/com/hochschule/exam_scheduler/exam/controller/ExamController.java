@@ -12,12 +12,10 @@ import java.util.List;
 @RequestMapping(path = "api/v1/exam")
 public class ExamController {
     private final ExamService examService;
-    private final ExamRepo examRepo;
 
     @Autowired
-    public ExamController(ExamService examService, ExamRepo examRepo) {
+    public ExamController(ExamService examService) {
         this.examService = examService;
-        this.examRepo = examRepo;
     }
 
     @GetMapping
@@ -52,7 +50,7 @@ public class ExamController {
 
     @GetMapping("/{id}")
     public Exam getExamByLectureId(@PathVariable String id) {
-        return examRepo.findByIdIgnoreCase(id).orElse(null);
+        return examService.getExamByLectureId(id);
     }
     @PutMapping("/{id}")
     public Exam updateExam(@PathVariable String id, @RequestBody Exam updatedExam) {
@@ -62,5 +60,11 @@ public class ExamController {
     @DeleteMapping("/{id}")
     public void deleteExam(@PathVariable String id) {
         examService.deleteExam(id);
+    }
+
+    @DeleteMapping("/byFacultyProgram")
+    public void deleteExamsByFcAndPg(@PathVariable String facultyId,
+                                     @PathVariable String program) {
+        examService.deleteExamByFacultyAndProgram(facultyId, program);
     }
 }

@@ -35,10 +35,13 @@ public class ExamService {
                 .toList();
     }
     public List<Exam> getExamsByFaculty(String facultyId) {
-        return examRepo.findAll().stream()
-                .filter(exam -> exam.getFacultyId().equalsIgnoreCase(facultyId))
-                .toList();
+        return examRepo.findByFacultyIdIgnoreCase(facultyId);
     }
+
+    public Exam getExamByLectureId(String id) {
+        return examRepo.findByIdIgnoreCase(id).orElse(null);
+    }
+
     public List<Exam> getExamsByProgramAndLecture(String program, String lecture) {
         return examRepo.findAll().stream().filter(exam -> exam.getProgram().equalsIgnoreCase(program)
             && exam.getLecture().toLowerCase().contains(lecture.toLowerCase()))
@@ -82,6 +85,11 @@ public class ExamService {
     @Transactional
     public void deleteExam(String id) {
         examRepo.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteExamByFacultyAndProgram(String facultyId, String program) {
+        examRepo.deleteByFacultyIdAndProgram(facultyId, program);
     }
 
 }
