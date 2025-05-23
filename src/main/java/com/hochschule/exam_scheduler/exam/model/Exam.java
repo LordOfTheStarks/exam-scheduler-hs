@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Exam implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
     private String lecture;
     private String lectureTitle;
     private String facultyId;
@@ -61,7 +61,7 @@ public class Exam implements Serializable {
         return examMinutes;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -121,7 +121,7 @@ public class Exam implements Serializable {
         this.facultyId = facultyId;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
