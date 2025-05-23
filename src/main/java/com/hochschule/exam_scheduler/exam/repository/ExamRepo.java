@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface ExamRepo extends JpaRepository<Exam, String> {
     Optional<Exam> findByFacultyIdAndProgram(String facultyId, String program);
 
+    Optional<Exam> findByIdIgnoreCase(String id);
+
     void deleteByFacultyIdAndProgram(String facultyId, String program);
 }

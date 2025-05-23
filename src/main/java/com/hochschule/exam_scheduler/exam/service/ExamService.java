@@ -24,10 +24,6 @@ public class ExamService {
         return examRepo.findAll();
     }
 
-    public Exam getExamByLectureId(String id) {
-        return examRepo.findById(id).orElse(null);
-    }
-
     public List<Exam> getExamsByLecture(String lectureName) {
         return examRepo.findAll().stream()
                 .filter(exam -> exam.getLecture().toLowerCase().contains(lectureName.toLowerCase()))

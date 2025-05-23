@@ -2,6 +2,7 @@ package com.hochschule.exam_scheduler.exam.controller;
 
 import com.hochschule.exam_scheduler.exam.model.Exam;
 import com.hochschule.exam_scheduler.exam.service.ExamService;
+import com.hochschule.exam_scheduler.exam.repository.ExamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +12,12 @@ import java.util.List;
 @RequestMapping(path = "api/v1/exam")
 public class ExamController {
     private final ExamService examService;
+    private final ExamRepo examRepo;
 
     @Autowired
-    public ExamController(ExamService examService) {
+    public ExamController(ExamService examService, ExamRepo examRepo) {
         this.examService = examService;
+        this.examRepo = examRepo;
     }
 
     @GetMapping
@@ -49,7 +52,7 @@ public class ExamController {
 
     @GetMapping("/{id}")
     public Exam getExamByLectureId(@PathVariable String id) {
-        return examService.getExamByLectureId(id);
+        return examRepo.findByIdIgnoreCase(id).orElse(null);
     }
     @PutMapping("/{id}")
     public Exam updateExam(@PathVariable String id, @RequestBody Exam updatedExam) {
