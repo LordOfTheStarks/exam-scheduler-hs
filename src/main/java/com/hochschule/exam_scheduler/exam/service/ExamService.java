@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -51,8 +52,8 @@ public class ExamService {
     }
 
     public Exam addExam(Exam newExam) {
-        String lecture = newExam.getLecture().toUpperCase().replaceAll("//s+", "");
-        String program = newExam.getProgram().toUpperCase();
+        String lecture = normalizeToEnglish(newExam.getLecture().toUpperCase()).replaceAll("//s+", "");
+        String program = normalizeToEnglish(newExam.getProgram().toUpperCase());
         String number = "";
         Matcher matcher = Pattern.compile("(\\d+)$").matcher(lecture);
         if (matcher.find()) {
@@ -68,7 +69,7 @@ public class ExamService {
     }
 
     public Exam updateExam(String id, Exam updatedExam) {
-        return examRepo.findById(id).map(existing -> {
+        return examRepo.findByIdIgnoreCase(id).map(existing -> {
             existing.setLecture(updatedExam.getLecture());
             existing.setLectureTitle(updatedExam.getLectureTitle());
             existing.setFacultyId(updatedExam.getFacultyId());
@@ -85,7 +86,7 @@ public class ExamService {
     }
 
     public Exam patchExam(String id, Map<String, Object> updates) {
-        Exam exam = examRepo.findById(id).orElseThrow(() -> new RuntimeException("Exam not found"));
+        Exam exam = examRepo.findByIdIgnoreCase(id).orElseThrow(() -> new RuntimeException("Exam not found"));
 
         updates.forEach((key, value) -> {
             switch (key) {
@@ -114,6 +115,28 @@ public class ExamService {
     @Transactional
     public void deleteExamByFacultyAndProgram(String facultyId, String program) {
         examRepo.deleteByFacultyIdAndProgram(facultyId, program);
+    }
+
+    private String normalizeToEnglish(String text) {
+        if (text == null) return null;
+
+        text = text.replace("İ", "I")
+                .replace("ı", "i")
+                .replace("Ğ", "G")
+                .replace("ğ", "g")
+                .replace("Ü", "U")
+                .replace("ü", "u")
+                .replace("Ş", "S")
+                .replace("ş", "s")
+                .replace("Ö", "O")
+                .replace("ö", "o")
+                .replace("Ç", "C")
+                .replace("ç", "c");
+
+        text = Normalizer.normalize(text, Normalizer.Form.NFD);
+        text = text.replaceAll("[^\\p{ASCII}]", "");
+
+        return text;
     }
 
 }
