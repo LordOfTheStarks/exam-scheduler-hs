@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Component
 public class ExamService {
     private final ExamRepo examRepo;
+    public Exam exam;
 
     @Autowired
     public ExamService(ExamRepo examRepo) {
@@ -51,15 +52,15 @@ public class ExamService {
     public Exam updateExam(int id, Exam updatedExam) {
         return examRepo.findById(id).map(existing -> {
             existing.setLecture(updatedExam.getLecture());
-            existing.setLecture_title(updatedExam.getLecture_title());
+            existing.setLectureTitle(updatedExam.getLectureTitle());
             existing.setFacultyId(updatedExam.getFacultyId());
             existing.setProgram(updatedExam.getProgram());
-            existing.setExam_type(updatedExam.getExam_type());
+            existing.setExamType(updatedExam.getExamType());
             existing.setCampus(updatedExam.getCampus());
             existing.setBuilding(updatedExam.getBuilding());
             existing.setRoom(updatedExam.getRoom());
-            existing.setExam_start_time(updatedExam.getExam_start_time());
-            existing.setExam_minutes(updatedExam.getExam_minutes());
+            existing.setExamStartTime(updatedExam.getExamStartTime());
+            existing.setExamMinutes(updatedExam.getExamMinutes());
             existing.setInstructor(updatedExam.getInstructor());
             return examRepo.save(existing);
         }).orElse(null);
