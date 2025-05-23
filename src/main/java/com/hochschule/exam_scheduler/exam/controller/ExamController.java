@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/v1/exam")
@@ -57,12 +58,17 @@ public class ExamController {
         return examService.updateExam(id, updatedExam);
     }
 
+    @PatchMapping("/{id}")
+    public Exam patchExam(@PathVariable String id, @RequestBody Map<String, Object> updates) {
+        return examService.patchExam(id, updates);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteExam(@PathVariable String id) {
         examService.deleteExam(id);
     }
 
-    @DeleteMapping("/byFacultyProgram")
+    @DeleteMapping("/byFacultyProgram/{facultyId}/{program}")
     public void deleteExamsByFcAndPg(@PathVariable String facultyId,
                                      @PathVariable String program) {
         examService.deleteExamByFacultyAndProgram(facultyId, program);

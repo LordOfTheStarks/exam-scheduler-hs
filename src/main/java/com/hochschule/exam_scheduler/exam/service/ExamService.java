@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 @Component
 public class ExamService {
@@ -80,6 +82,28 @@ public class ExamService {
             existing.setInstructor(updatedExam.getInstructor());
             return examRepo.save(existing);
         }).orElse(null);
+    }
+
+    public Exam patchExam(String id, Map<String, Object> updates) {
+        Exam exam = examRepo.findById(id).orElseThrow(() -> new RuntimeException("Exam not found"));
+
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "building" -> exam.setBuilding((String) value);
+                case "campus" -> exam.setCampus((String) value);
+                case "room" -> exam.setRoom((String) value);
+                case "lecture" -> exam.setLecture((String) value);
+                case "lectureTitle" -> exam.setLectureTitle((String) value);
+                case "facultyId" -> exam.setFacultyId((String) value);
+                case "program" -> exam.setProgram((String) value);
+                case "examType" -> exam.setExamType((String) value);
+                case "examStartTime" -> exam.setExamStartTime(LocalDateTime.parse((String) value));
+                case "examMinutes" -> exam.setExamMinutes(((Number) value).intValue());
+                case "instructor" -> exam.setInstructor((String) value);
+            }
+        });
+
+        return examRepo.save(exam);
     }
 
     @Transactional
