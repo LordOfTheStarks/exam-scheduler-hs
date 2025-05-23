@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ExamRepo extends JpaRepository<Exam, Integer> {
+public interface ExamRepo extends JpaRepository<Exam, String> {
     Optional<Exam> findByFacultyIdAndProgram(String facultyId, String program);
 
     void deleteByFacultyIdAndProgram(String facultyId, String program);

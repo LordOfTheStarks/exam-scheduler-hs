@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,11 +24,14 @@ public class ExamService {
         return examRepo.findAll();
     }
 
+    public Exam getExamByLectureId(String id) {
+        return examRepo.findById(id).orElse(null);
+    }
+
     public List<Exam> getExamsByLecture(String lectureName) {
         return examRepo.findAll().stream()
                 .filter(exam -> exam.getLecture().toLowerCase().contains(lectureName.toLowerCase()))
                 .collect(Collectors.toList());
-
     }
     public List<Exam> getExamsByProgram(String programName) {
         return examRepo.findAll().stream()
@@ -45,15 +50,23 @@ public class ExamService {
     }
 
     public Exam addExam(Exam newExam) {
-        if (newExam.getId() == null || newExam.getId().isBlank()) {
-            String lectureCode = abbreviateLecture(newExam.getLecture());
-            String generatedId = newExam.getProgram().toUpperCase() + "-" + lectureCode;
-            newExam.setId(generatedId);
+        String lecture = newExam.getLecture().toUpperCase().replaceAll("//s+", "");
+        String program = newExam.getProgram().toUpperCase();
+        String number = "";
+        Matcher matcher = Pattern.compile("(\\d+)$").matcher(lecture);
+        if (matcher.find()) {
+            number = matcher.group(1);
+            lecture = lecture.replaceAll("(\\d+)$", "");
         }
+        String abbreviated = lecture.length() > 4 ? lecture.substring(0, 4) : lecture;
+
+        String generatedId = program + "-" + abbreviated + number;
+        newExam.setId(generatedId);
+
         return examRepo.save(newExam);
     }
 
-    public Exam updateExam(int id, Exam updatedExam) {
+    public Exam updateExam(String id, Exam updatedExam) {
         return examRepo.findById(id).map(existing -> {
             existing.setLecture(updatedExam.getLecture());
             existing.setLectureTitle(updatedExam.getLectureTitle());
@@ -71,13 +84,8 @@ public class ExamService {
     }
 
     @Transactional
-    public void deleteExam(int id) {
+    public void deleteExam(String id) {
         examRepo.deleteById(id);
     }
 
-    private String abbreviateLecture(String lectureName) {
-        String cleaned = lectureName.replaceAll("[^A-Za-z0-9]", "");
-
-        return cleaned.length() <= 4 ? cleaned.toUpperCase() : cleaned.substring(0, 4).toUpperCase();
-    }
 }

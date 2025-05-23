@@ -47,13 +47,17 @@ public class ExamController {
         return examService.addExam(newExam);
     }
 
+    @GetMapping("/{id}")
+    public Exam getExamByLectureId(@PathVariable String id) {
+        return examService.getExamByLectureId(id);
+    }
     @PutMapping("/{id}")
-    public Exam updateExam(@PathVariable int id, @RequestBody Exam updatedExam) {
+    public Exam updateExam(@PathVariable String id, @RequestBody Exam updatedExam) {
         return examService.updateExam(id, updatedExam);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteExam(@PathVariable int id) {
+    public void deleteExam(@PathVariable String id) {
         examService.deleteExam(id);
     }
 }
