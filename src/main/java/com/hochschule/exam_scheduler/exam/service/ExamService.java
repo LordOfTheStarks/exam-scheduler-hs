@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @Component
 public class ExamService {
     private final ExamRepo examRepo;
-    public Exam exam;
 
     @Autowired
     public ExamService(ExamRepo examRepo) {
@@ -46,6 +45,11 @@ public class ExamService {
     }
 
     public Exam addExam(Exam newExam) {
+        if (newExam.getId() == null || newExam.getId().isBlank()) {
+            String lectureCode = abbreviateLecture(newExam.getLecture());
+            String generatedId = newExam.getProgram().toUpperCase() + "-" + lectureCode;
+            newExam.setId(generatedId);
+        }
         return examRepo.save(newExam);
     }
 
@@ -69,5 +73,11 @@ public class ExamService {
     @Transactional
     public void deleteExam(int id) {
         examRepo.deleteById(id);
+    }
+
+    private String abbreviateLecture(String lectureName) {
+        String cleaned = lectureName.replaceAll("[^A-Za-z0-9]", "");
+
+        return cleaned.length() <= 4 ? cleaned.toUpperCase() : cleaned.substring(0, 4).toUpperCase();
     }
 }
