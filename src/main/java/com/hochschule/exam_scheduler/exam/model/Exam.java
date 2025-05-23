@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "sose2025")
 public class Exam implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private String id;
     private String lecture;
     private String lectureTitle;
